@@ -1,4 +1,7 @@
 import json
+from os import path
+from pathlib import PosixPath
+
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
@@ -10,34 +13,26 @@ from sklearn.model_selection import train_test_split
 from sklearn.metrics import mean_absolute_error, r2_score
 pd.set_option('display.max_columns', None)
 pd.set_option('display.width', None)
-team_name = "Lech Poznan"
 df = pd.read_csv("./POL.csv")
-
+from pathlib import Path
 #print(response)
 #print(df)
 data = sd.FBref(
     leagues="POL-Ekstraklasa",
-    seasons="2025"
+    seasons="2025",
+    data_dir=Path(r"C:\ProjektyPython\Projekt\Cache")
 )
 stats = data.read_schedule()
-print(stats)
-class teamstats:
-    def __init__(self,data):
-        self.Goals = data
+print(stats.columns.tolist())
+team_stats_before = stats.loc[(stats["home_team"] == team_name) | (stats["away_team"] == team_name)].copy()
+class season_team_stats:
 
-def all_matches(team_name):
-    teamstats = df.loc[(df["Season"]=="2025/2026") & ((df["Home"] == team_name) | (df["Away"] == team_name)),["Home","Away","HG","AG","Res"]].copy()
-    teamstats["Goals"] = np.where(
-        teamstats["Home"] == team_name,
-        teamstats["HG"],
-        teamstats["AG"]
-    )
-    teamstats["Res"] = np.select([((teamstats["Home"] == team_name) & (teamstats["Res"] == "H")),((teamstats["Away"] == team_name) & (teamstats["Res"] == "A")),(teamstats["Res"] == "D")],["Win","Win","Draw"],default="Lose")
-    teamstats["MatchNumber"] = range(1,len(teamstats)+1)
-    #print(teamstats)
-    return teamstats
+    def __init__(self,stats,team_name):
+        self.goals_scored = sum(np.where(stats["home_team"]==team_name,stats["score"].str[0].astype(int),stats["score"].str[2].astype(int)))
+        self.goals_conceded = sum(np.where(stats["home_team"] != team_name, stats["score"].str[0].astype(int), stats["score"].str[2].astype(int)))
 
-
+team_stats_after = season_team_stats(team_stats_before,"Lech Poznań")
+print(team_stats_after)
 
 #a,b = np.polyfit( teamstats["MatchNumber"],teamstats["Goals"], 1)
 #trend = a * teamstats["MatchNumber"] + b
