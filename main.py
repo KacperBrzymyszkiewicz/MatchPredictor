@@ -22,9 +22,15 @@ data = sd.FBref(
     seasons="2025",
     data_dir=Path(r"C:\ProjektyPython\Projekt\Cache")
 )
-stats = data.read_schedule()
-print(stats.columns.tolist())
-team_stats_before = stats.loc[(stats["home_team"] == team_name) | (stats["away_team"] == team_name)].copy()
+team_name="Lech Poznań"
+stats_schedule = data.read_schedule()
+stats_match = data.read_team_match_stats(stat_type="standard",team=team_name)
+print(stats_match)
+print(stats_schedule.columns.tolist())
+team_stats_before = stats_schedule.loc[(stats_schedule["home_team"] == team_name) | (stats_schedule["away_team"] == team_name)].copy()
+print(team_stats_before)
+
+
 class season_team_stats:
 
     def __init__(self,stats,team_name):
@@ -32,7 +38,8 @@ class season_team_stats:
         self.goals_conceded = sum(np.where(stats["home_team"] != team_name, stats["score"].str[0].astype(int), stats["score"].str[2].astype(int)))
 
 team_stats_after = season_team_stats(team_stats_before,"Lech Poznań")
-print(team_stats_after)
+
+print(team_stats_after.goals_scored)
 
 #a,b = np.polyfit( teamstats["MatchNumber"],teamstats["Goals"], 1)
 #trend = a * teamstats["MatchNumber"] + b
