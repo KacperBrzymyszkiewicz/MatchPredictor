@@ -24,7 +24,7 @@ data = sd.FBref(
 )
 team_name="Lech Poznań"
 stats_schedule = data.read_schedule()
-stats_match = data.read_team_match_stats(stat_type="standard",team=team_name)
+stats_match = data.read_team_match_stats(stat_type="schedule",team=team_name)
 print(stats_match)
 print(stats_schedule.columns.tolist())
 team_stats_before = stats_schedule.loc[(stats_schedule["home_team"] == team_name) | (stats_schedule["away_team"] == team_name)].copy()
@@ -37,10 +37,16 @@ class season_team_stats:
         self.goals_scored = sum(np.where(stats["home_team"]==team_name,stats["score"].str[0].astype(int),stats["score"].str[2].astype(int)))
         self.goals_conceded = sum(np.where(stats["home_team"] != team_name, stats["score"].str[0].astype(int), stats["score"].str[2].astype(int)))
 
-team_stats_after = season_team_stats(team_stats_before,"Lech Poznań")
+team_stats_object = season_team_stats(team_stats_before,"Lech Poznań")
 
-print(team_stats_after.goals_scored)
+print(team_stats_object.goals_scored)
 
+def graph_goals_throught_season(data):
+    print(max(data["GF"]))
+    plt.hist(data["GF"],bins=[x - 0.5 for x in range(int(max(data["GF"]+2)))],edgecolor="black")
+    plt.xticks(range(min(data["GF"]),max(data["GF"]+2)))
+    plt.show()
+graph_goals_throught_season(stats_match)
 #a,b = np.polyfit( teamstats["MatchNumber"],teamstats["Goals"], 1)
 #trend = a * teamstats["MatchNumber"] + b
 #print(teamstats[teamstats["Res"] == "Win"]["Goals"].sum()/(teamstats["Res"]=="Win").sum())
