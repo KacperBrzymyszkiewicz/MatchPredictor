@@ -17,18 +17,7 @@ df = pd.read_csv("./POL.csv")
 from pathlib import Path
 #print(response)
 #print(df)
-data = sd.FBref(
-    leagues="POL-Ekstraklasa",
-    seasons="2025",
-    data_dir=Path(r"C:\ProjektyPython\Projekt\Cache")
-)
 team_name="Lech Poznań"
-stats_schedule = data.read_schedule()
-stats_match = data.read_team_match_stats(stat_type="schedule",team=team_name)
-print(stats_match)
-print(stats_schedule.columns.tolist())
-team_stats_before = stats_schedule.loc[(stats_schedule["home_team"] == team_name) | (stats_schedule["away_team"] == team_name)].copy()
-print(team_stats_before)
 
 
 class season_team_stats:
@@ -41,25 +30,13 @@ team_stats_object = season_team_stats(team_stats_before,"Lech Poznań")
 
 print(team_stats_object.goals_scored)
 
-def graph_goals_throught_season(data):
+def graph_goals_throughout_season(data):
     print(max(data["GF"]))
     plt.hist(data["GF"],bins=[x - 0.5 for x in range(int(max(data["GF"]+2)))],edgecolor="black")
+    plt.xlabel(f"Liczba zdobytych goli {team_name}")
+    plt.ylabel("Liczba meczów")
     plt.xticks(range(min(data["GF"]),max(data["GF"]+2)))
     plt.show()
-graph_goals_throught_season(stats_match)
-#a,b = np.polyfit( teamstats["MatchNumber"],teamstats["Goals"], 1)
-#trend = a * teamstats["MatchNumber"] + b
-#print(teamstats[teamstats["Res"] == "Win"]["Goals"].sum()/(teamstats["Res"]=="Win").sum())
-# print(a,b)
-# print(teamstats[["Goals","MatchNumber"]])
-# plt.figure(figsize=(len(teamstats),5))
-# plt.plot(teamstats["MatchNumber"], trend, color="red")
-# plt.scatter(teamstats["MatchNumber"],teamstats["Goals"])
-# plt.xlabel(team_name)
-# plt.ylabel("Goals")
-# plt.show()
-# plt.figure(figsize=(len(teamstats["Res"] == "Win"),teamstats["Goals"].max()+1))
-# plt.scatter(teamstats[teamstats["Res"] == "Win"]["MatchNumber"],teamstats[teamstats["Res"] == "Win"]["Goals"])
-# plt.xticks(teamstats[teamstats["Res"] == "Win"]["MatchNumber"])
-# plt.yticks(range(0, teamstats["Goals"].max() + 1))
-# plt.show()
+
+
+#graph_goals_throughout_season(stats_match)
